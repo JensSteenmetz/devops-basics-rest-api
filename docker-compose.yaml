@@ -1,6 +1,6 @@
-version: '3'
 services:
   student_service:
+    build: .
     image: devops-basics-rest-api/student_service
     restart: unless-stopped
     depends_on:
@@ -11,7 +11,12 @@ services:
       - "8080:8080"
 
   mongo:
-    restart: unless-stopped
     image: mongo:4
+    restart: unless-stopped
     ports:
       - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

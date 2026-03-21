@@ -43,3 +43,47 @@ def delete(student_id=None):
         "_id": ObjectId(student_id)
     })
     return student_id
+
+
+def get_average_grade(student_id=None):
+    student = student_db.find_one({
+        "_id": ObjectId(student_id)
+    })
+    if not student:
+        return "Student not found", 404
+
+    grade_records = student.get("grade_records", [])
+
+    total = 0
+    count = 0
+
+    for record in grade_records:
+        grade = record.get("grade")
+        if grade is not None:
+            total += grade
+            count += 1
+
+    if count == 0:
+        return "No valid grades found for this student", 404
+
+    average = total / count
+
+    return average
+
+def get_subject_grade(student_id=None, subject=None):
+    if not student_id or not subject:
+        return "student_id and subject are required", 400
+
+    student = student_db.find_one({
+        "_id": ObjectId(student_id)
+    })
+    if not student:
+        return "Student not found", 404
+
+    grade_records = student.get("grade_records", [])
+
+    for record in grade_records:
+        if record.get("subject_name") == subject:
+            return {"grade": record.get("grade")}, 200
+
+    return {"message": f"Grade for subject '{subject}' not found"}, 404
