@@ -1,6 +1,7 @@
 import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import json
 
 mongo_uri = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 client = MongoClient(mongo_uri)
@@ -17,7 +18,7 @@ def add(student=None):
         return 'already exists', 409
 
     result = student_db.insert_one(student.to_dict())
-    return str(result.inserted_id), 200
+    return json.dumps(str(result.inserted_id)), 200, 200
 
 
 def get_by_id(student_id=None, subject=None):
