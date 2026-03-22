@@ -17,7 +17,7 @@ def add(student=None):
         return 'already exists', 409
 
     result = student_db.insert_one(student.to_dict())
-    return str(result.inserted_id)
+    return str(result.inserted_id), 200
 
 
 def get_by_id(student_id=None, subject=None):
@@ -29,7 +29,7 @@ def get_by_id(student_id=None, subject=None):
 
     student['student_id'] = str(student['_id'])
     student.pop('_id', None)
-    return student
+    return student, 200
 
 
 def delete(student_id=None):
@@ -42,7 +42,7 @@ def delete(student_id=None):
     student_db.delete_one({
         "_id": ObjectId(student_id)
     })
-    return student_id
+    return student_id, 200
 
 
 def get_average_grade(student_id=None):
@@ -68,7 +68,7 @@ def get_average_grade(student_id=None):
 
     average = total / count
 
-    return average
+    return average, 200
 
 def get_subject_grade(student_id=None, subject=None):
     if not student_id or not subject:
@@ -84,6 +84,6 @@ def get_subject_grade(student_id=None, subject=None):
 
     for record in grade_records:
         if record.get("subject_name") == subject:
-            return {"grade": record.get("grade")}, 200
+            return record.get("grade"), 200
 
     return {"message": f"Grade for subject '{subject}' not found"}, 404
